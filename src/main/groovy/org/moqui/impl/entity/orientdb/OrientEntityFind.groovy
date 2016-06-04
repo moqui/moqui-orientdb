@@ -20,6 +20,7 @@ import groovy.transform.CompileStatic
 import org.moqui.impl.entity.condition.EntityConditionImplBase
 import org.moqui.impl.entity.EntityJavaUtil.FieldInfo
 import org.moqui.impl.entity.EntityJavaUtil.FieldOrderOptions
+import org.moqui.impl.entity.EntityJavaUtil.EntityConditionParameter
 import org.moqui.entity.*
 import org.moqui.impl.entity.*
 
@@ -81,7 +82,7 @@ class OrientEntityFind extends EntityFindBase {
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString)
 
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityQueryBuilder.EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
@@ -155,7 +156,7 @@ class OrientEntityFind extends EntityFindBase {
 
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString.toString())
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityQueryBuilder.EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
@@ -217,7 +218,7 @@ class OrientEntityFind extends EntityFindBase {
 
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString.toString())
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityQueryBuilder.EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
