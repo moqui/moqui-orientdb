@@ -73,7 +73,7 @@ jar {
 }
 
 task copyDependencies << {
-    copy { from (configurations.compile - project(':framework').configurations.runtime - project(':framework').jar.archivePath)
+    copy { from (configurations.runtime - project(':framework').configurations.runtime - project(':framework').jar.archivePath)
         into file(projectDir.absolutePath + '/lib') }
 }
 copyDependencies.dependsOn cleanLib
