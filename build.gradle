@@ -14,8 +14,9 @@
 
 apply plugin: 'groovy'
 
-version = '1.0.0'
 sourceCompatibility = '1.7'
+version = '1.0.0'
+def jarBaseName = 'moqui-orientdb'
 def moquiDir = projectDir.parentFile.parentFile.parentFile
 def frameworkDir = file(moquiDir.absolutePath + '/framework')
 
@@ -68,10 +69,8 @@ clean.dependsOn cleanLib
 
 jar {
     destinationDir = file(projectDir.absolutePath + '/lib')
-    // this is required to change from the default that includes the path to this module (ie 'runtime/component/moqui-orientdb')
-    baseName = 'moqui-orientdb'
+    baseName = jarBaseName
 }
-
 task copyDependencies << {
     copy { from (configurations.runtime - project(':framework').configurations.runtime - project(':framework').jar.archivePath)
         into file(projectDir.absolutePath + '/lib') }
