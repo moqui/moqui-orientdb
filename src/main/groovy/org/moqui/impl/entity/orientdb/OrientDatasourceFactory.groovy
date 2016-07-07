@@ -42,8 +42,8 @@ import javax.sql.DataSource
  * 2. to get OrientDB to automatically create the database, add a corresponding "storage" element to the
  *      orientdb-server-config.xml file
  *
- * 3. add the group-name attribute to entity elements as needed to point them to the new datasource; for example:
- *      group-name="nontransactional"
+ * 3. add the group attribute to entity elements as needed to point them to the new datasource; for example:
+ *      group="nontransactional"
  */
 @CompileStatic
 class OrientDatasourceFactory implements EntityDatasourceFactory {
