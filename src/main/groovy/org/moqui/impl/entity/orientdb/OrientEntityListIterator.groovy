@@ -228,9 +228,6 @@ class OrientEntityListIterator implements EntityListIterator {
     }
 
     @Override
-    Iterator<EntityValue> iterator() { return this }
-
-    @Override
     void remove() {
         throw new IllegalArgumentException("OrientEntityListIterator.remove() not currently supported")
         // TODO implement this
