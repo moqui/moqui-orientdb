@@ -221,7 +221,7 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
             // create "pk" index
             String indexName = ed.getTableName() + "_PK"
             List colNames = []
-            for (String pkFieldName in pkFieldNames) colNames.add(ed.getColumnName(pkFieldName, false))
+            for (String pkFieldName in pkFieldNames) colNames.add(ed.getColumnName(pkFieldName))
             // toArray because method uses Java ellipses syntax
             oc.createIndex(indexName, OClass.INDEX_TYPE.UNIQUE, (String[]) colNames.toArray(new String[colNames.size()]))
 

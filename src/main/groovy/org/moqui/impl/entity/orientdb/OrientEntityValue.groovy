@@ -58,7 +58,7 @@ class OrientEntityValue extends EntityValueBase {
         int size = fieldNameList.size()
         for (int i = 0; i < size; i++) {
             String fieldName = fieldNameList.get(i)
-            Object fieldValue = document.field(ed.getColumnName(fieldName, false))
+            Object fieldValue = document.field(ed.getColumnName(fieldName))
             if (fieldValue == null) { getValueMap().put(fieldName, null); continue }
 
             FieldInfo fieldInfo = ed.getFieldInfo(fieldName)
@@ -144,7 +144,7 @@ class OrientEntityValue extends EntityValueBase {
 
             ODocument od = oddt.newInstance(ed.getTableName())
             for (Map.Entry<String, Object> valueEntry in getValueMap()) {
-                od.field(ed.getColumnName(valueEntry.getKey(), false), valueEntry.getValue())
+                od.field(ed.getColumnName(valueEntry.getKey()), valueEntry.getValue())
             }
             od.save()
             recordId = od.getIdentity()
