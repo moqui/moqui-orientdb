@@ -44,8 +44,8 @@ class OrientEntityFind extends EntityFindBase {
     }
 
     @Override
-    EntityValueBase oneExtended(EntityConditionImplBase whereCondition, ArrayList<FieldInfo> fieldInfoList,
-                                ArrayList<FieldOrderOptions> fieldOptionsList) throws EntityException {
+    EntityValueBase oneExtended(EntityConditionImplBase whereCondition, FieldInfo[] fieldInfoArray,
+                                FieldOrderOptions[] fieldOptionsArray) throws EntityException {
         EntityDefinition ed = this.getEntityDef()
 
         // NOTE: the native Java query API does not used indexes and such, so use the OSQL approach
@@ -61,7 +61,7 @@ class OrientEntityFind extends EntityFindBase {
             // NOTE: for OrientDB don't bother listing fields to select: efb.makeSqlSelectFields(fieldInfoList, fieldOptionsList)
 
             // FROM Clause
-            efb.makeSqlFromClause(fieldInfoList)
+            efb.makeSqlFromClause(fieldInfoArray)
 
             // WHERE clause only for one/pk query
             // NOTE: do this here after caching because this will always be added on and isn't a part of the original where
@@ -103,8 +103,8 @@ class OrientEntityFind extends EntityFindBase {
 
     @Override
     EntityListIterator iteratorExtended(EntityConditionImplBase whereCondition, EntityConditionImplBase havingCondition,
-                                        ArrayList<String> orderByExpanded, ArrayList<FieldInfo> fieldInfoList,
-                                        ArrayList<FieldOrderOptions> fieldOptionsList) throws EntityException {
+                                        ArrayList<String> orderByExpanded, FieldInfo[] fieldInfoArray,
+                                        FieldOrderOptions[] fieldOptionsArray) throws EntityException {
         EntityDefinition ed = this.getEntityDef()
 
         // NOTE: see syntax at https://github.com/orientechnologies/orientdb/wiki/SQL-Query
@@ -113,9 +113,9 @@ class OrientEntityFind extends EntityFindBase {
         if (this.getDistinct()) efb.makeDistinct()
 
         // select fields
-        efb.makeSqlSelectFields(fieldInfoList, fieldOptionsList)
+        efb.makeSqlSelectFields(fieldInfoArray, fieldOptionsArray)
         // FROM Clause
-        efb.makeSqlFromClause(fieldInfoList)
+        efb.makeSqlFromClause(fieldInfoArray)
 
         // WHERE clause
         if (whereCondition) {
@@ -123,7 +123,7 @@ class OrientEntityFind extends EntityFindBase {
             whereCondition.makeSqlWhere(efb)
         }
         // GROUP BY clause
-        efb.makeGroupByClause(fieldInfoList)
+        efb.makeGroupByClause(fieldInfoArray)
         // HAVING clause
         if (havingCondition) {
             efb.startHavingClause()
@@ -163,7 +163,7 @@ class OrientEntityFind extends EntityFindBase {
             // logger.warn("TOREMOVE: got OrientDb query results: ${documentList}")
 
             // NOTE: for now don't pass in oddt (pass in null), we're getting the whole list up front we can close it in finally
-            eli = new OrientEntityListIterator(odf, null, documentList, getEntityDef(), fieldInfoList, this.efi)
+            eli = new OrientEntityListIterator(odf, null, documentList, getEntityDef(), fieldInfoArray, this.efi)
         } catch (EntityException e) {
             throw e
         } catch (Throwable t) {
@@ -177,7 +177,7 @@ class OrientEntityFind extends EntityFindBase {
 
     @Override
     long countExtended(EntityConditionImplBase whereCondition, EntityConditionImplBase havingCondition,
-                       ArrayList<FieldInfo> fieldInfoList, ArrayList<FieldOrderOptions> fieldOptionsList) throws EntityException {
+                       FieldInfo[] fieldInfoArray, FieldOrderOptions[] fieldOptionsArray) throws EntityException {
         EntityDefinition ed = this.getEntityDef()
         EntityFindBuilder efb = new EntityFindBuilder(ed, this)
 
@@ -185,7 +185,7 @@ class OrientEntityFind extends EntityFindBase {
         efb.getSqlTopLevel().append("COUNT(1) ")
         // efb.makeCountFunction()
         // FROM Clause
-        efb.makeSqlFromClause(fieldInfoList)
+        efb.makeSqlFromClause(fieldInfoArray)
 
         // WHERE clause
         if (whereCondition) {
@@ -193,7 +193,7 @@ class OrientEntityFind extends EntityFindBase {
             whereCondition.makeSqlWhere(efb)
         }
         // GROUP BY clause
-        efb.makeGroupByClause(fieldInfoList)
+        efb.makeGroupByClause(fieldInfoArray)
         // HAVING clause
         if (havingCondition) {
             efb.startHavingClause()

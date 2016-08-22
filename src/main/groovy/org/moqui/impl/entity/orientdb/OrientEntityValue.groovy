@@ -130,7 +130,7 @@ class OrientEntityValue extends EntityValueBase {
     }
 
     @Override
-    void createExtended(ArrayList<FieldInfo> fieldList, Connection con) {
+    void createExtended(FieldInfo[] fieldInfoArray, Connection con) {
         EntityDefinition ed = getEntityDefinition()
         if (ed.isViewEntity()) throw new EntityException("Create not yet implemented for view-entity")
 
@@ -154,7 +154,7 @@ class OrientEntityValue extends EntityValueBase {
     }
 
     @Override
-    void updateExtended(ArrayList<FieldInfo> pkFieldList, ArrayList<FieldInfo> nonPkFieldList, Connection con) {
+    void updateExtended(FieldInfo[] pkFieldArray, FieldInfo[] nonPkFieldArray, Connection con) {
         EntityDefinition ed = getEntityDefinition()
         if (ed.isViewEntity()) throw new EntityException("Update not yet implemented for view-entity")
 
@@ -181,18 +181,20 @@ class OrientEntityValue extends EntityValueBase {
             else sql.append("#").append(recordId.getClusterId()).append(":").append(recordId.getClusterPosition())
             sql.append(" SET ")
 
-            int size = nonPkFieldList.size()
+            int size = nonPkFieldArray.length
             for (int i = 0; i < size; i++) {
-                FieldInfo fi = nonPkFieldList.get(i)
+                FieldInfo fi = nonPkFieldArray[i]
+                if (fi == null) break
                 if (i > 0) sql.append(", ")
                 sql.append(fi.fullColumnName).append("=?")
                 paramValues.add(getValueMap().get(fi.name))
             }
             if (recordId == null) {
                 sql.append(" WHERE ")
-                int sizePk = pkFieldList.size()
+                int sizePk = pkFieldArray.length
                 for (int i = 0; i < sizePk; i++) {
-                    FieldInfo fi = pkFieldList.get(i)
+                    FieldInfo fi = pkFieldArray[i]
+                    if (fi == null) break
                     if (i > 0) sql.append(" AND ")
                     sql.append(fi.fullColumnName).append("=?")
                     paramValues.add(getValueMap().get(fi.name))
@@ -249,10 +251,10 @@ class OrientEntityValue extends EntityValueBase {
             sql.append("DELETE FROM ")
             if (recordId == null) {
                 sql.append(ed.getTableName()).append(" WHERE ")
-                ArrayList<FieldInfo> pkFieldList = ed.getPkFieldInfoList()
-                int sizePk = pkFieldList.size()
+                FieldInfo[] pkFieldArray = ed.getPkFieldInfoArray()
+                int sizePk = pkFieldArray.length
                 for (int i = 0; i < sizePk; i++) {
-                    FieldInfo fi = pkFieldList.get(i)
+                    FieldInfo fi = pkFieldArray[i]
                     if (i > 0) sql.append(" AND ")
                     sql.append(fi.fullColumnName).append(" = ?")
                     paramValues.add(getValueMap().get(fi.name))
@@ -295,10 +297,10 @@ class OrientEntityValue extends EntityValueBase {
             sql.append("SELECT FROM ")
             if (recordId == null) {
                 sql.append(ed.getTableName()).append(" WHERE ")
-                ArrayList<FieldInfo> pkFieldList = ed.getPkFieldInfoList()
-                int sizePk = pkFieldList.size()
+                FieldInfo[] pkFieldArray = ed.getPkFieldInfoArray()
+                int sizePk = pkFieldArray.length
                 for (int i = 0; i < sizePk; i++) {
-                    FieldInfo fi = pkFieldList.get(i)
+                    FieldInfo fi = pkFieldArray[i]
                     if (i > 0) sql.append(" AND ")
                     sql.append(fi.fullColumnName).append(" = ?")
                     paramValues.add(getValueMap().get(fi.name))
