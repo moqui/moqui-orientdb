@@ -23,7 +23,7 @@ import groovy.transform.CompileStatic
 import org.moqui.entity.EntityException
 import org.moqui.entity.EntityValue
 import org.moqui.impl.entity.EntityDefinition
-import org.moqui.impl.entity.EntityJavaUtil.FieldInfo
+import org.moqui.impl.entity.FieldInfo
 import org.moqui.impl.entity.EntityFacadeImpl
 import org.moqui.impl.entity.EntityValueBase
 
@@ -132,7 +132,7 @@ class OrientEntityValue extends EntityValueBase {
     @Override
     void createExtended(FieldInfo[] fieldInfoArray, Connection con) {
         EntityDefinition ed = getEntityDefinition()
-        if (ed.isViewEntity()) throw new EntityException("Create not yet implemented for view-entity")
+        if (ed.isViewEntity) throw new EntityException("Create not yet implemented for view-entity")
 
         boolean isXaDatabase = true
         ODatabaseDocumentTx oddt = odf.getSynchronizationDatabase()
@@ -156,7 +156,7 @@ class OrientEntityValue extends EntityValueBase {
     @Override
     void updateExtended(FieldInfo[] pkFieldArray, FieldInfo[] nonPkFieldArray, Connection con) {
         EntityDefinition ed = getEntityDefinition()
-        if (ed.isViewEntity()) throw new EntityException("Update not yet implemented for view-entity")
+        if (ed.isViewEntity) throw new EntityException("Update not yet implemented for view-entity")
 
         // NOTE: according to OrientDB documentation the native Java query API does not use indexes and such, so use the OSQL approach
 
@@ -235,7 +235,7 @@ class OrientEntityValue extends EntityValueBase {
     @Override
     void deleteExtended(Connection con) {
         EntityDefinition ed = getEntityDefinition()
-        if (ed.isViewEntity()) throw new EntityException("Delete not yet implemented for view-entity")
+        if (ed.isViewEntity) throw new EntityException("Delete not yet implemented for view-entity")
 
         // NOTE: according to OrientDB documentation the native Java query API does not use indexes and such, so use the OSQL approach
 
@@ -251,7 +251,7 @@ class OrientEntityValue extends EntityValueBase {
             sql.append("DELETE FROM ")
             if (recordId == null) {
                 sql.append(ed.getTableName()).append(" WHERE ")
-                FieldInfo[] pkFieldArray = ed.getPkFieldInfoArray()
+                FieldInfo[] pkFieldArray = ed.entityInfo.pkFieldInfoArray
                 int sizePk = pkFieldArray.length
                 for (int i = 0; i < sizePk; i++) {
                     FieldInfo fi = pkFieldArray[i]
@@ -297,7 +297,7 @@ class OrientEntityValue extends EntityValueBase {
             sql.append("SELECT FROM ")
             if (recordId == null) {
                 sql.append(ed.getTableName()).append(" WHERE ")
-                FieldInfo[] pkFieldArray = ed.getPkFieldInfoArray()
+                FieldInfo[] pkFieldArray = ed.entityInfo.pkFieldInfoArray
                 int sizePk = pkFieldArray.length
                 for (int i = 0; i < sizePk; i++) {
                     FieldInfo fi = pkFieldArray[i]

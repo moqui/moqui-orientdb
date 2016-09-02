@@ -25,7 +25,7 @@ import org.moqui.context.TransactionFacade
 import org.moqui.entity.*
 import org.moqui.impl.entity.EntityDefinition
 import org.moqui.impl.entity.EntityFacadeImpl
-import org.moqui.impl.entity.EntityJavaUtil
+import org.moqui.impl.entity.FieldInfo
 import org.moqui.util.MNode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -189,7 +189,7 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
 
     void checkCreateDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
         // TODO: do something with view entities
-        if (ed.isViewEntity()) return
+        if (ed.isViewEntity) return
 
         if (checkedClassSet.contains(ed.getFullEntityName())) return
 
@@ -200,7 +200,7 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
     }
     synchronized void createDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
         // TODO: do something with view entities
-        if (ed.isViewEntity()) return
+        if (ed.isViewEntity) return
 
         OClass oc = oddt.getMetadata().getSchema().getClass(ed.getTableName())
         if (oc == null) {
@@ -209,10 +209,10 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
 
             // create all properties
             List<String> pkFieldNames = ed.getPkFieldNames()
-            ArrayList<EntityJavaUtil.FieldInfo> allFieldInfoList = ed.getAllFieldInfoList()
-            int allFieldInfoListSize = allFieldInfoList.size()
+            FieldInfo[] allFieldInfoList = ed.entityInfo.allFieldInfoArray
+            int allFieldInfoListSize = allFieldInfoList.length
             for (int i = 0; i < allFieldInfoListSize; i++) {
-                EntityJavaUtil.FieldInfo fieldInfo = allFieldInfoList.get(i)
+                FieldInfo fieldInfo = (FieldInfo) allFieldInfoList[i]
                 String fieldName = fieldInfo.name
                 OProperty op = oc.createProperty(fieldInfo.columnName, getFieldType(fieldInfo.typeValue))
                 if (pkFieldNames.contains(fieldName)) op.setMandatory(true).setNotNull(true)

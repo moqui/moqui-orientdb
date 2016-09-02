@@ -24,7 +24,6 @@ import org.moqui.entity.EntityValue
 import org.moqui.impl.context.TransactionCache
 import org.moqui.impl.entity.EntityDefinition
 import org.moqui.impl.entity.EntityFacadeImpl
-import org.moqui.impl.entity.EntityJavaUtil
 import org.moqui.impl.entity.EntityListImpl
 import org.moqui.impl.entity.EntityValueBase
 import org.slf4j.Logger
@@ -46,7 +45,6 @@ class OrientEntityListIterator implements EntityListIterator {
     protected int internalIndex = -1
 
     protected EntityDefinition entityDefinition
-    // protected EntityJavaUtil.FieldInfo[] fieldInfoArray
     protected EntityCondition queryCondition = null
     protected List<String> orderByFields = null
 
@@ -56,8 +54,7 @@ class OrientEntityListIterator implements EntityListIterator {
     protected boolean closed = false
 
     OrientEntityListIterator(OrientDatasourceFactory odf, ODatabaseDocumentTx oddt, List<ODocument> documentList,
-                             EntityDefinition entityDefinition, EntityJavaUtil.FieldInfo[] fieldInfoArray,
-                             EntityFacadeImpl efi) {
+                             EntityDefinition entityDefinition, EntityFacadeImpl efi) {
         this.efi = efi
         this.odf = odf
         this.oddt = oddt

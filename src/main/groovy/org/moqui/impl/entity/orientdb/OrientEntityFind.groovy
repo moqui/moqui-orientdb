@@ -18,7 +18,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import groovy.transform.CompileStatic
 import org.moqui.impl.entity.condition.EntityConditionImplBase
-import org.moqui.impl.entity.EntityJavaUtil.FieldInfo
+import org.moqui.impl.entity.FieldInfo
 import org.moqui.impl.entity.EntityJavaUtil.FieldOrderOptions
 import org.moqui.impl.entity.EntityJavaUtil.EntityConditionParameter
 import org.moqui.entity.*
@@ -163,7 +163,7 @@ class OrientEntityFind extends EntityFindBase {
             // logger.warn("TOREMOVE: got OrientDb query results: ${documentList}")
 
             // NOTE: for now don't pass in oddt (pass in null), we're getting the whole list up front we can close it in finally
-            eli = new OrientEntityListIterator(odf, null, documentList, getEntityDef(), fieldInfoArray, this.efi)
+            eli = new OrientEntityListIterator(odf, null, documentList, ed, this.efi)
         } catch (EntityException e) {
             throw e
         } catch (Throwable t) {
