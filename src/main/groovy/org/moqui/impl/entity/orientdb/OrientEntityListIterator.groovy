@@ -61,7 +61,7 @@ class OrientEntityListIterator implements EntityListIterator {
         this.documentList = documentList
         this.entityDefinition = entityDefinition
         // this.fieldInfoArray = fieldInfoArray
-        this.txCache = efi.getEcfi().getTransactionFacade().getTransactionCache()
+        this.txCache = efi.ecfi.transactionFacade.getTransactionCache()
     }
 
     void setQueryCondition(EntityCondition ec) { this.queryCondition = ec }

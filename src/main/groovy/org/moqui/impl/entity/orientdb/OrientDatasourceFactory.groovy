@@ -71,7 +71,7 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
         this.datasourceNode = datasourceNode
         this.tenantId = tenantId
 
-        System.setProperty("ORIENTDB_HOME", efi.getEcfi().getRuntimePath() + "/db/orientdb")
+        System.setProperty("ORIENTDB_HOME", efi.ecfi.getRuntimePath() + "/db/orientdb")
         System.setProperty("ORIENTDB_ROOT_PASSWORD", "moqui")
 
         // init the DataSource
@@ -96,7 +96,7 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
                 (inlineOtherNode.attribute("password") ?: inlineOtherNode.attribute("jdbc-password"))
 
         oserver = OServerMain.create()
-        oserver.startup(efi.getEcfi().getResourceFacade().getLocationStream("db/orientdb/config/orientdb-server-config.xml"))
+        oserver.startup(efi.ecfi.resourceFacade.getLocationStream("db/orientdb/config/orientdb-server-config.xml"))
         oserver.activate()
 
         int maxSize = (inlineOtherNode.attribute("pool-maxsize") ?: "50") as int
@@ -121,11 +121,11 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
      * This will return null if no transaction is in place.
      */
     ODatabaseDocumentTx getSynchronizationDatabase() {
-        TransactionFacade tf = efi.getEcfi().getTransactionFacade()
+        TransactionFacade tf = efi.ecfi.transactionFacade
         OrientSynchronization oxr = (OrientSynchronization) tf.getActiveSynchronization("OrientSynchronization")
         if (oxr == null) {
             if (tf.isTransactionInPlace()) {
-                oxr = new OrientSynchronization(efi.getEcfi(), this).enlistOrGet()
+                oxr = new OrientSynchronization(efi.ecfi, this).enlistOrGet()
             } else {
                 return null
             }

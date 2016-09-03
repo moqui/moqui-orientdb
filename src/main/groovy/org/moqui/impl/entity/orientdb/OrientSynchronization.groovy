@@ -44,19 +44,19 @@ class OrientSynchronization implements Synchronization {
 
     OrientSynchronization enlistOrGet() {
         // logger.warn("========= Enlisting new OrientSynchronization")
-        TransactionManager tm = ecfi.getTransactionFacade().getTransactionManager()
+        TransactionManager tm = ecfi.transactionFacade.getTransactionManager()
         if (tm == null || tm.getStatus() != Status.STATUS_ACTIVE) throw new XAException("Cannot enlist: no transaction manager or transaction not active")
         Transaction tx = tm.getTransaction()
         if (tx == null) throw new XAException(XAException.XAER_NOTA)
         this.tx = tx
 
-        OrientSynchronization existingOxr = (OrientSynchronization) ecfi.getTransactionFacade().getActiveSynchronization("OrientSynchronization")
+        OrientSynchronization existingOxr = (OrientSynchronization) ecfi.transactionFacade.getActiveSynchronization("OrientSynchronization")
         if (existingOxr != null) {
             logger.warn("Tried to enlist OrientSynchronization in current transaction but one is already in place, not enlisting", new TransactionException("OrientSynchronization already in place"))
             return existingOxr
         }
         // logger.warn("================= putting and enlisting new OrientSynchronization")
-        ecfi.getTransactionFacade().putAndEnlistActiveSynchronization("OrientSynchronization", this)
+        ecfi.transactionFacade.putAndEnlistActiveSynchronization("OrientSynchronization", this)
 
         this.database = odf.getDatabase()
         this.database.begin()
