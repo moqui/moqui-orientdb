@@ -51,7 +51,6 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
 
     protected EntityFacadeImpl efi
     protected MNode datasourceNode
-    protected String tenantId
 
     protected OServer oserver
     protected OPartitionedDatabasePool databaseDocumentPool
@@ -65,35 +64,19 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
     OrientDatasourceFactory() { }
 
     @Override
-    EntityDatasourceFactory init(EntityFacade ef, MNode datasourceNode, String tenantId) {
+    EntityDatasourceFactory init(EntityFacade ef, MNode datasourceNode) {
         // local fields
         this.efi = (EntityFacadeImpl) ef
         this.datasourceNode = datasourceNode
-        this.tenantId = tenantId
 
         System.setProperty("ORIENTDB_HOME", efi.ecfi.getRuntimePath() + "/db/orientdb")
         System.setProperty("ORIENTDB_ROOT_PASSWORD", "moqui")
 
         // init the DataSource
-        EntityValue tenant = null
-        EntityFacadeImpl defaultEfi = null
-        if (this.tenantId != "DEFAULT") {
-            defaultEfi = efi.ecfi.getEntityFacade("DEFAULT")
-            tenant = defaultEfi.find("moqui.tenant.Tenant").condition("tenantId", this.tenantId).one()
-        }
-
-        EntityValue tenantDataSource = null
-        if (tenant != null) {
-            tenantDataSource = defaultEfi.find("moqui.tenant.TenantDataSource").condition("tenantId", this.tenantId)
-                    .condition("entityGroupName", datasourceNode.attribute("group-name")).one()
-        }
-
         MNode inlineOtherNode = datasourceNode.first("inline-other")
-        uri = tenantDataSource ? tenantDataSource.jdbcUri : (inlineOtherNode.attribute("uri") ?: inlineOtherNode.attribute("jdbc-uri"))
-        username = tenantDataSource ? tenantDataSource.jdbcUsername :
-                (inlineOtherNode.attribute("username") ?: inlineOtherNode.attribute("jdbc-username"))
-        password = tenantDataSource ? tenantDataSource.jdbcPassword :
-                (inlineOtherNode.attribute("password") ?: inlineOtherNode.attribute("jdbc-password"))
+        uri = inlineOtherNode.attribute("uri") ?: inlineOtherNode.attribute("jdbc-uri")
+        username = inlineOtherNode.attribute("username") ?: inlineOtherNode.attribute("jdbc-username")
+        password = inlineOtherNode.attribute("password") ?: inlineOtherNode.attribute("jdbc-password")
 
         oserver = OServerMain.create()
         oserver.startup(efi.ecfi.resourceFacade.getLocationStream("db/orientdb/config/orientdb-server-config.xml"))
