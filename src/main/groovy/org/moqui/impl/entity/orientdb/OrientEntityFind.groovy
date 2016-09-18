@@ -76,13 +76,13 @@ class OrientEntityFind extends EntityFindBase {
             // run the SQL now that it is built
             odf.checkCreateDocumentClass(oddt, ed)
 
-            String sqlString = efb.getSqlTopLevel().toString()
+            String sqlString = efb.sqlTopLevel.toString()
             // logger.warn("TOREMOVE: running OrientDB query: ${sqlString}")
 
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString)
 
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.parameters) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
@@ -134,8 +134,8 @@ class OrientEntityFind extends EntityFindBase {
         efb.makeOrderByClause(orderByExpanded)
         // LIMIT/OFFSET clause
         // efb.addLimitOffset(this.limit, this.offset)
-        if (offset) efb.getSqlTopLevel().append(" SKIP ").append(offset)
-        if (limit) efb.getSqlTopLevel().append(" LIMIT ").append(limit)
+        if (offset) efb.sqlTopLevel.append(" SKIP ").append(offset)
+        if (limit) efb.sqlTopLevel.append(" LIMIT ").append(limit)
 
         // FOR UPDATE (TODO: supported in ODB?)
         // if (this.forUpdate) efb.makeForUpdate()
@@ -151,12 +151,12 @@ class OrientEntityFind extends EntityFindBase {
             odf.checkCreateDocumentClass(oddt, ed)
 
             // get SQL and do query with OrientDB API
-            String sqlString = efb.getSqlTopLevel().toString()
+            String sqlString = efb.sqlTopLevel.toString()
             // logger.warn("TOREMOVE: running OrientDB query: ${sqlString}")
 
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString.toString())
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.parameters) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
@@ -182,7 +182,7 @@ class OrientEntityFind extends EntityFindBase {
         EntityFindBuilder efb = new EntityFindBuilder(ed, this)
 
         // count function instead of select fields
-        efb.getSqlTopLevel().append("COUNT(1) ")
+        efb.sqlTopLevel.append("COUNT(1) ")
         // efb.makeCountFunction()
         // FROM Clause
         efb.makeSqlFromClause(fieldInfoArray)
@@ -213,12 +213,12 @@ class OrientEntityFind extends EntityFindBase {
             odf.checkCreateDocumentClass(oddt, ed)
 
             // get SQL and do query with OrientDB API
-            String sqlString = efb.getSqlTopLevel().toString()
+            String sqlString = efb.sqlTopLevel.toString()
             // logger.warn("TOREMOVE: running OrientDB count query: ${sqlString}")
 
             OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(sqlString.toString())
             List<Object> paramValues = new ArrayList<Object>()
-            for (EntityConditionParameter entityConditionParam in efb.getParameters()) {
+            for (EntityConditionParameter entityConditionParam in efb.parameters) {
                 paramValues.add(entityConditionParam.getValue())
             }
             List<ODocument> documentList = oddt.command(query).execute(paramValues.toArray(new Object[paramValues.size()])) as List<ODocument>
