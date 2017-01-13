@@ -113,7 +113,7 @@ class OrientEntityFind extends EntityFindBase {
         if (this.getDistinct()) efb.makeDistinct()
 
         // select fields
-        efb.makeSqlSelectFields(fieldInfoArray, fieldOptionsArray)
+        efb.makeSqlSelectFields(fieldInfoArray, fieldOptionsArray, false)
         // FROM Clause
         efb.makeSqlFromClause(fieldInfoArray)
 
@@ -183,7 +183,7 @@ class OrientEntityFind extends EntityFindBase {
 
         // count function instead of select fields
         efb.sqlTopLevel.append("COUNT(1) ")
-        // efb.makeCountFunction()
+        // efb.makeCountFunction(fieldInfoArray, fieldOptionsArray, isDistinct, isGroupBy)
         // FROM Clause
         efb.makeSqlFromClause(fieldInfoArray)
 
@@ -200,7 +200,7 @@ class OrientEntityFind extends EntityFindBase {
             havingCondition.makeSqlWhere(efb)
         }
 
-        efb.closeCountFunctionIfGroupBy()
+        // efb.closeCountSubSelect(fieldInfoArray.length, isDistinct, isGroupBy)
 
         // run the SQL now that it is built
         long count = 0
