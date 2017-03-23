@@ -131,7 +131,7 @@ class OrientEntityFind extends EntityFindBase {
         }
 
         // ORDER BY clause
-        efb.makeOrderByClause(orderByExpanded)
+        efb.makeOrderByClause(orderByExpanded, false)
         // LIMIT/OFFSET clause
         // efb.addLimitOffset(this.limit, this.offset)
         if (offset) efb.sqlTopLevel.append(" SKIP ").append(offset)
