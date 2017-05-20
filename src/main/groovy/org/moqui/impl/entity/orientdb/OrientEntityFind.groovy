@@ -55,21 +55,20 @@ class OrientEntityFind extends EntityFindBase {
         if (oddt == null) { oddt = odf.getDatabase(); isXaDatabase = false }
 
         try {
-            EntityFindBuilder efb = new EntityFindBuilder(ed, this)
+            EntityFindBuilder efb = new EntityFindBuilder(ed, this, whereCondition, fieldInfoArray)
 
             // SELECT fields
             // NOTE: for OrientDB don't bother listing fields to select: efb.makeSqlSelectFields(fieldInfoList, fieldOptionsList)
 
             // FROM Clause
-            efb.makeSqlFromClause(fieldInfoArray)
+            efb.makeSqlFromClause()
 
             // WHERE clause only for one/pk query
             // NOTE: do this here after caching because this will always be added on and isn't a part of the original where
             EntityConditionImplBase viewWhere = ed.makeViewWhereCondition()
             if (viewWhere != null) whereCondition =
                 (EntityConditionImplBase) efi.getConditionFactory().makeCondition(whereCondition, EntityCondition.JoinOperator.AND, viewWhere)
-            efb.startWhereClause()
-            whereCondition.makeSqlWhere(efb)
+            efb.makeWhereClause()
 
             // FOR UPDATE doesn't seem to be supported for OrientDB: if (this.forUpdate) efb.makeForUpdate()
 
@@ -109,26 +108,19 @@ class OrientEntityFind extends EntityFindBase {
 
         // NOTE: see syntax at https://github.com/orientechnologies/orientdb/wiki/SQL-Query
 
-        EntityFindBuilder efb = new EntityFindBuilder(ed, this)
+        EntityFindBuilder efb = new EntityFindBuilder(ed, this, whereCondition, fieldInfoArray)
         if (this.getDistinct()) efb.makeDistinct()
 
         // select fields
         efb.makeSqlSelectFields(fieldInfoArray, fieldOptionsArray, false)
         // FROM Clause
-        efb.makeSqlFromClause(fieldInfoArray)
-
+        efb.makeSqlFromClause()
         // WHERE clause
-        if (whereCondition) {
-            efb.startWhereClause()
-            whereCondition.makeSqlWhere(efb)
-        }
+        efb.makeWhereClause()
         // GROUP BY clause
-        efb.makeGroupByClause(fieldInfoArray)
+        efb.makeGroupByClause()
         // HAVING clause
-        if (havingCondition) {
-            efb.startHavingClause()
-            havingCondition.makeSqlWhere(efb)
-        }
+        efb.makeHavingClause(havingCondition)
 
         // ORDER BY clause
         efb.makeOrderByClause(orderByExpanded, false)
@@ -179,26 +171,19 @@ class OrientEntityFind extends EntityFindBase {
     long countExtended(EntityConditionImplBase whereCondition, EntityConditionImplBase havingCondition,
                        FieldInfo[] fieldInfoArray, FieldOrderOptions[] fieldOptionsArray) throws EntityException {
         EntityDefinition ed = this.getEntityDef()
-        EntityFindBuilder efb = new EntityFindBuilder(ed, this)
+        EntityFindBuilder efb = new EntityFindBuilder(ed, this, whereCondition, fieldInfoArray)
 
         // count function instead of select fields
         efb.sqlTopLevel.append("COUNT(1) ")
         // efb.makeCountFunction(fieldInfoArray, fieldOptionsArray, isDistinct, isGroupBy)
         // FROM Clause
-        efb.makeSqlFromClause(fieldInfoArray)
-
+        efb.makeSqlFromClause()
         // WHERE clause
-        if (whereCondition) {
-            efb.startWhereClause()
-            whereCondition.makeSqlWhere(efb)
-        }
+        efb.makeWhereClause()
         // GROUP BY clause
-        efb.makeGroupByClause(fieldInfoArray)
+        efb.makeGroupByClause()
         // HAVING clause
-        if (havingCondition) {
-            efb.startHavingClause()
-            havingCondition.makeSqlWhere(efb)
-        }
+        efb.makeHavingClause(havingCondition)
 
         // efb.closeCountSubSelect(fieldInfoArray.length, isDistinct, isGroupBy)
 
