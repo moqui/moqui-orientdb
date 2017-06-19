@@ -24,8 +24,10 @@ import org.moqui.entity.EntityValue
 import org.moqui.impl.context.TransactionCache
 import org.moqui.impl.entity.EntityDefinition
 import org.moqui.impl.entity.EntityFacadeImpl
+import org.moqui.impl.entity.EntityJavaUtil
 import org.moqui.impl.entity.EntityListImpl
 import org.moqui.impl.entity.EntityValueBase
+import org.moqui.util.CollectionUtilities
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -164,10 +166,24 @@ class OrientEntityListIterator implements EntityListIterator {
 
             if (txCache != null && queryCondition != null) {
                 // add all created values (updated and deleted values will be handled by the next() method
-                List<EntityValueBase> cvList = txCache.getCreatedValueList(entityDefinition.getFullEntityName(), queryCondition)
-                list.addAll(cvList)
-                // update the order if we know the order by field list
-                if (orderByFields != null && cvList) list.orderByFields(orderByFields)
+                EntityJavaUtil.FindAugmentInfo tempFai = txCache.getFindAugmentInfo(entityDefinition.getFullEntityName(), queryCondition);
+                if (tempFai.valueListSize > 0) {
+                    // remove update values already in list
+                    if (tempFai.foundUpdated.size() > 0) {
+                        int valueListSize = list.size()
+                        for (int i = 0; i < valueListSize; ) {
+                            EntityValue ev = list.get(i)
+                            if (tempFai.foundUpdated.contains(ev.getPrimaryKeys())) {
+                                list.remove(i)
+                            } else {
+                                i++
+                            }
+                        }
+                    }
+                    list.addAll(tempFai.valueList)
+                    // update the order if we know the order by field list
+                    if (orderByFields != null && orderByFields.size() > 0) list.orderByFields(orderByFields)
+                }
             }
 
             return list
