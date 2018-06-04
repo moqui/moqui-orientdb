@@ -26,8 +26,6 @@ import org.moqui.impl.entity.EntityDefinition
 import org.moqui.impl.entity.EntityFacadeImpl
 import org.moqui.impl.entity.EntityJavaUtil
 import org.moqui.impl.entity.EntityListImpl
-import org.moqui.impl.entity.EntityValueBase
-import org.moqui.util.CollectionUtilities
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -263,7 +261,7 @@ class OrientEntityListIterator implements EntityListIterator {
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    void finalize() throws Throwable {
         if (!closed) {
             this.close()
             logger.error("OrientEntityListIterator not closed for entity [${entityDefinition.getEntityName()}], caught in finalize()")
