@@ -140,12 +140,12 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
         return true
     }
     @Override
-    void checkAndAddTable(String entityName) {
+    boolean checkAndAddTable(String entityName) {
         EntityDefinition ed
         // just ignore EntityException on getEntityDefinition
-        try { ed = efi.getEntityDefinition(entityName) } catch (EntityException e) { return }
+        try { ed = efi.getEntityDefinition(entityName) } catch (EntityException e) { return false }
         // may happen if all entity names includes a DB view entity or other that doesn't really exist
-        if (ed == null) return
+        if (ed == null) return false
 
         ODatabaseDocumentTx createOddt = getDatabase()
         try {
@@ -170,16 +170,21 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
     @Override
     DataSource getDataSource() { return null }
 
-    void checkCreateDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
+    boolean checkCreateDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
         // TODO: do something with view entities
-        if (ed.isViewEntity) return
+        if (ed.isViewEntity) return false
 
-        if (checkedClassSet.contains(ed.getFullEntityName())) return
+        if (checkedClassSet.contains(ed.getFullEntityName())) return false
 
+        boolean created = false
         OClass oc = oddt.getMetadata().getSchema().getClass(ed.getTableName())
-        if (oc == null) createDocumentClass(oddt, ed)
+        if (oc == null) {
+            createDocumentClass(oddt, ed)
+            created = true
+        }
 
         checkedClassSet.add(ed.getFullEntityName())
+        return created
     }
     synchronized void createDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
         // TODO: do something with view entities
