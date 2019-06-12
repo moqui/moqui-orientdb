@@ -25,7 +25,7 @@ def frameworkDir = file(moquiDir.absolutePath + '/framework')
 apply plugin: 'com.github.ben-manes.versions'
 buildscript {
   repositories { jcenter() }
-  dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0' }
+  dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0' }
 }
 dependencyUpdates.resolutionStrategy = { componentSelection { rules -> rules.all { ComponentSelection selection ->
     boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'pr'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.\d-]${qualifier}[.\d-]*/ }
@@ -45,16 +45,16 @@ dependencies {
     compile project(':framework')
 
     // OrientDB
-    compile 'com.orientechnologies:orientdb-client:3.0.3' // Apache 2.0
-    compile 'com.orientechnologies:orientdb-core:3.0.3' // Apache 2.0
+    compile 'com.orientechnologies:orientdb-client:3.0.19' // Apache 2.0
+    compile 'com.orientechnologies:orientdb-core:3.0.19' // Apache 2.0
     // orientdb-graphdb has a bunch of dependencies that conflict with other things, needed included below or elsewhere
-    compile module('com.orientechnologies:orientdb-graphdb:3.0.3') { // Apache 2.0
+    compile module('com.orientechnologies:orientdb-graphdb:3.0.19') { // Apache 2.0
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
         exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'commons-beanutils' // includes commons-beanutils-core, commons-beanutils included elsewhere
     }
-    compile('com.orientechnologies:orientdb-server:3.0.3') { exclude group: 'javax.mail' } // Apache 2.0
+    compile('com.orientechnologies:orientdb-server:3.0.19') { exclude group: 'javax.mail' } // Apache 2.0
     // this is a mess: blueprints-core depends on all sorts of things and some required dependencies have conflicts
     compile module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
     compile 'org.codehaus.jettison:jettison:1.4.0'
