@@ -51,9 +51,11 @@ dependencies {
     compile module('com.orientechnologies:orientdb-graphdb:3.0.19') { // Apache 2.0
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
-        exclude group: 'com.fasterxml.jackson.core'
+        // exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'commons-beanutils' // includes commons-beanutils-core, commons-beanutils included elsewhere
     }
+    // needed? compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.10.1'
+
     compile('com.orientechnologies:orientdb-server:3.0.19') { exclude group: 'javax.mail' } // Apache 2.0
     // this is a mess: blueprints-core depends on all sorts of things and some required dependencies have conflicts
     compile module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
