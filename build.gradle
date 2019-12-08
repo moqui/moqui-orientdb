@@ -44,11 +44,15 @@ tasks.withType(GroovyCompile) { options.compilerArgs << "-proc:none" }
 dependencies {
     compile project(':framework')
 
-    // OrientDB
-    compile 'com.orientechnologies:orientdb-client:3.0.26' // Apache 2.0
-    compile 'com.orientechnologies:orientdb-core:3.0.26' // Apache 2.0
+    // OrientDB - Apache 2.0
+    compile ('com.orientechnologies:orientdb-core:3.0.26') {
+        exclude group: 'javax.activation'
+    }
+    compile ('com.orientechnologies:orientdb-client:3.0.26') {
+        exclude group: 'javax.activation'
+    }
     // orientdb-graphdb has a bunch of dependencies that conflict with other things, needed included below or elsewhere
-    compile module('com.orientechnologies:orientdb-graphdb:3.0.26') { // Apache 2.0
+    compile module('com.orientechnologies:orientdb-graphdb:3.0.26') {
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
         // exclude group: 'com.fasterxml.jackson.core'
@@ -56,7 +60,12 @@ dependencies {
     }
     // needed? compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.10.1'
 
-    compile('com.orientechnologies:orientdb-server:3.0.26') { exclude group: 'javax.mail' } // Apache 2.0
+    compile('com.orientechnologies:orientdb-server:3.0.26') {
+        exclude group: 'javax.mail'
+        exclude group: 'javax.activation'
+        exclude group: 'javax.xml.bind'
+        exclude group: 'com.sun.xml.bind'
+    }
     // this is a mess: blueprints-core depends on all sorts of things and some required dependencies have conflicts
     compile module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
     compile 'org.codehaus.jettison:jettison:1.4.0'

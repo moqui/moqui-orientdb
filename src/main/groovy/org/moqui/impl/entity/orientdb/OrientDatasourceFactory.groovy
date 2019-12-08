@@ -74,11 +74,12 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
 
         // init the DataSource
         MNode inlineOtherNode = datasourceNode.first("inline-other")
+        inlineOtherNode.setSystemExpandAttributes(true)
         uri = inlineOtherNode.attribute("uri") ?: inlineOtherNode.attribute("jdbc-uri")
         username = inlineOtherNode.attribute("username") ?: inlineOtherNode.attribute("jdbc-username")
         password = inlineOtherNode.attribute("password") ?: inlineOtherNode.attribute("jdbc-password")
 
-        oserver = OServerMain.create()
+        oserver = OServerMain.create(false)
         oserver.startup(efi.ecfi.resourceFacade.getLocationStream("db/orientdb/config/orientdb-server-config.xml"))
         oserver.activate()
 
