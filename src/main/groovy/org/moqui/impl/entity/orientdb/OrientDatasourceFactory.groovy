@@ -155,6 +155,20 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
             createOddt.close()
         }
     }
+    @Override
+    int checkAndAddAllTables() {
+        int tablesAdded = 0
+        String groupName = datasourceNode.attribute("group-name")
+
+        for (String entityName in efi.getAllEntityNames()) {
+            String entGroupName = efi.getEntityGroupName(entityName) ?: efi.defaultGroupName
+            if (entGroupName.equals(groupName)) {
+                if (checkAndAddTable(entityName)) tablesAdded++
+            }
+        }
+
+        return tablesAdded
+    }
 
     @Override
     EntityValue makeEntityValue(String entityName) {
