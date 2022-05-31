@@ -14,7 +14,6 @@
 
 apply plugin: 'groovy'
 
-sourceCompatibility = '1.8'
 def componentNode = parseComponent(project)
 version = componentNode.'@version'
 def jarBaseName = 'moqui-orientdb'
@@ -24,8 +23,11 @@ def frameworkDir = file(moquiDir.absolutePath + '/framework')
 // to run use "gradle dependencyUpdates"
 apply plugin: 'com.github.ben-manes.versions'
 buildscript {
-  repositories { jcenter() }
-  dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0' }
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.42.0' }
 }
 dependencyUpdates.resolutionStrategy = { componentSelection { rules -> rules.all { ComponentSelection selection ->
     boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'pr'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.\d-]${qualifier}[.\d-]*/ }
@@ -34,7 +36,7 @@ dependencyUpdates.resolutionStrategy = { componentSelection { rules -> rules.all
 
 repositories {
     flatDir name: 'localLib', dirs: frameworkDir.absolutePath + '/lib'
-    jcenter()
+    mavenCentral()
 }
 
 // Log4J has annotation processors, disable to avoid warning
@@ -42,17 +44,17 @@ tasks.withType(JavaCompile) { options.compilerArgs << "-proc:none" }
 tasks.withType(GroovyCompile) { options.compilerArgs << "-proc:none" }
 
 dependencies {
-    compile project(':framework')
+    implementation project(':framework')
 
     // OrientDB - Apache 2.0
-    compile ('com.orientechnologies:orientdb-core:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-core:3.0.26') {
         exclude group: 'javax.activation'
     }
-    compile ('com.orientechnologies:orientdb-client:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-client:3.0.26') {
         exclude group: 'javax.activation'
     }
     // orientdb-graphdb has a bunch of dependencies that conflict with other things, needed included below or elsewhere
-    compile module('com.orientechnologies:orientdb-graphdb:3.0.26') {
+    implementation module('com.orientechnologies:orientdb-graphdb:3.0.26') {
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
         // exclude group: 'com.fasterxml.jackson.core'
@@ -60,18 +62,18 @@ dependencies {
     }
     // needed? compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.10.1'
 
-    compile('com.orientechnologies:orientdb-server:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-server:3.0.26') {
         exclude group: 'javax.mail'
         exclude group: 'javax.activation'
         exclude group: 'javax.xml.bind'
         exclude group: 'com.sun.xml.bind'
     }
     // this is a mess: blueprints-core depends on all sorts of things and some required dependencies have conflicts
-    compile module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
-    compile 'org.codehaus.jettison:jettison:1.4.0'
-    compile 'com.carrotsearch:hppc:0.8.1'
-    compile 'com.tinkerpop.gremlin:gremlin-java:2.6.0' // BSD
-    compile('com.tinkerpop.gremlin:gremlin-groovy:2.6.0') {
+    implementation module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
+    implementation 'org.codehaus.jettison:jettison:1.4.0'
+    implementation 'com.carrotsearch:hppc:0.8.1'
+    implementation 'com.tinkerpop.gremlin:gremlin-java:2.6.0' // BSD
+    implementation ('com.tinkerpop.gremlin:gremlin-groovy:2.6.0') {
         exclude group: 'org.codehaus.groovy'
         exclude group: 'org.apache.ant'
         exclude group: 'org.apache.ivy'
@@ -95,7 +97,7 @@ jar {
     archiveBaseName = jarBaseName
 }
 task copyDependencies { doLast {
-    copy { from (configurations.runtime - project(':framework').configurations.runtime - project(':framework').jar.archivePath)
+    copy { from (configurations.runtimeClasspath - project(':framework').configurations.runtimeClasspath - project(':framework').jar.archivePath)
         into file(projectDir.absolutePath + '/lib') }
 } }
 copyDependencies.dependsOn cleanLib
