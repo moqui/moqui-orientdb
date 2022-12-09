@@ -183,6 +183,16 @@ class OrientDatasourceFactory implements EntityDatasourceFactory {
     EntityFind makeEntityFind(String entityName) { return new OrientEntityFind(efi, entityName, this) }
 
     @Override
+    void createBulk(List<EntityValue> valueList) {
+        // basic approach
+        Iterator<EntityValue> valueIterator = valueList.iterator()
+        while (valueIterator.hasNext()) {
+            EntityValue ev = (EntityValue) valueIterator.next()
+            ev.create()
+        }
+    }
+
+    @Override
     DataSource getDataSource() { return null }
 
     boolean checkCreateDocumentClass(ODatabaseDocumentTx oddt, EntityDefinition ed) {
