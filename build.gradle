@@ -54,11 +54,12 @@ dependencies {
         exclude group: 'javax.activation'
     }
     // orientdb-graphdb has a bunch of dependencies that conflict with other things, needed included below or elsewhere
-    implementation module('com.orientechnologies:orientdb-graphdb:3.0.26') {
+    implementation('com.orientechnologies:orientdb-graphdb:3.0.26') {
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
         // exclude group: 'com.fasterxml.jackson.core'
         exclude group: 'commons-beanutils' // includes commons-beanutils-core, commons-beanutils included elsewhere
+        transitive = false
     }
     // needed? compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.10.1'
 
@@ -69,7 +70,9 @@ dependencies {
         exclude group: 'com.sun.xml.bind'
     }
     // this is a mess: blueprints-core depends on all sorts of things and some required dependencies have conflicts
-    implementation module('com.tinkerpop.blueprints:blueprints-core:2.6.0')
+    implementation('com.tinkerpop.blueprints:blueprints-core:2.6.0') {
+        transitive = false
+    }
     implementation 'org.codehaus.jettison:jettison:1.4.0'
     implementation 'com.carrotsearch:hppc:0.8.1'
     implementation 'com.tinkerpop.gremlin:gremlin-java:2.6.0' // BSD
@@ -97,8 +100,12 @@ jar {
     archiveBaseName = jarBaseName
 }
 task copyDependencies { doLast {
-    copy { from (configurations.runtimeClasspath - project(':framework').configurations.runtimeClasspath - project(':framework').jar.archivePath)
-        into file(projectDir.absolutePath + '/lib') }
+    copy {
+        from (configurations.runtimeClasspath -
+              project(':framework').configurations.runtimeClasspath -
+              project(':framework').tasks.jar.archiveFile.get().asFile)
+        into file(projectDir.absolutePath + '/lib')
+    }
 } }
 copyDependencies.dependsOn cleanLib
 jar.dependsOn copyDependencies
