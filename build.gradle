@@ -20,20 +20,6 @@ def jarBaseName = 'moqui-orientdb'
 def moquiDir = projectDir.parentFile.parentFile.parentFile
 def frameworkDir = file(moquiDir.absolutePath + '/framework')
 
-// to run use "gradle dependencyUpdates"
-apply plugin: 'com.github.ben-manes.versions'
-buildscript {
-    repositories {
-        mavenCentral()
-        maven { url = "https://plugins.gradle.org/m2/" }
-    }
-    dependencies { classpath 'com.github.ben-manes:gradle-versions-plugin:0.42.0' }
-}
-dependencyUpdates.resolutionStrategy = { componentSelection { rules -> rules.all { ComponentSelection selection ->
-    boolean rejected = ['alpha', 'beta', 'rc', 'cr', 'm', 'pr'].any { qualifier -> selection.candidate.version ==~ /(?i).*[.\d-]${qualifier}[.\d-]*/ }
-    if (rejected) selection.reject('Release candidate')
-} } }
-
 repositories {
     flatDir name: 'localLib', dirs: frameworkDir.absolutePath + '/lib'
     mavenCentral()
@@ -47,14 +33,14 @@ dependencies {
     implementation project(':framework')
 
     // OrientDB - Apache 2.0
-    implementation ('com.orientechnologies:orientdb-core:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-core:3.2.47') {
         exclude group: 'javax.activation'
     }
-    implementation ('com.orientechnologies:orientdb-client:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-client:3.2.47') {
         exclude group: 'javax.activation'
     }
     // orientdb-graphdb has a bunch of dependencies that conflict with other things, needed included below or elsewhere
-    implementation('com.orientechnologies:orientdb-graphdb:3.0.26') {
+    implementation('com.orientechnologies:orientdb-graphdb:3.2.47') {
         exclude group: 'com.tinkerpop.gremlin'
         exclude group: 'com.orientechnologies'
         // exclude group: 'com.fasterxml.jackson.core'
@@ -63,7 +49,7 @@ dependencies {
     }
     // needed? compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.10.1'
 
-    implementation ('com.orientechnologies:orientdb-server:3.0.26') {
+    implementation ('com.orientechnologies:orientdb-server:3.2.47') {
         exclude group: 'javax.mail'
         exclude group: 'javax.activation'
         exclude group: 'javax.xml.bind'
@@ -74,7 +60,7 @@ dependencies {
         transitive = false
     }
     implementation 'org.codehaus.jettison:jettison:1.4.0'
-    implementation 'com.carrotsearch:hppc:0.8.1'
+    implementation 'com.carrotsearch:hppc:0.10.0'
     implementation 'com.tinkerpop.gremlin:gremlin-java:2.6.0' // BSD
     implementation ('com.tinkerpop.gremlin:gremlin-groovy:2.6.0') {
         exclude group: 'org.codehaus.groovy'
